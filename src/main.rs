@@ -95,3 +95,16 @@ fn process(fun: fn(&str) -> Result<String>) -> Result<Option<String>> {
 
     Ok(Some(fun(s)?))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn roundtrip_encode_decode() {
+        let s = "hello world";
+        let enc = morse(s).unwrap();
+        let dec = parse(&enc).unwrap();
+        assert_eq!(s, dec)
+    }
+}
