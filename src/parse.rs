@@ -1,4 +1,4 @@
-use anyhow::{bail, Result};
+use anyhow::{Result, bail};
 
 use crate::lookup::{LATIN_LU, MORSE_LU};
 
@@ -21,35 +21,37 @@ pub fn morse(latin: &str) -> Result<String> {
             buf.push(morse);
         }
 
-        let s = buf.join("/");
+        let s = buf.join(" ");
         vec.push(s);
     }
 
-    let s = vec.join("//");
+    let s = vec.join("/");
 
     Ok(s)
 }
 
 pub fn parse(morse: &str) -> Result<String> {
-    let mut buf: Vec<&'static str> = Vec::new();
+    let mut vec: Vec<String> = Vec::new();
 
-    for morse in morse.split("/") {
-        if morse.is_empty() {
-            buf.push(" ");
-            continue;
+    for word in morse.split("/") {
+        let mut buf: Vec<&'static str> = Vec::new();
+
+        for morse in word.split(" ") {
+            let index = MORSE_LU.iter().position(|&s| s == morse);
+            let index = match index {
+                Some(idx) => idx,
+                None => bail!("Morse '{}' not found in lookup table", morse),
+            };
+
+            let latin = LATIN_LU[index];
+            buf.push(latin);
         }
 
-        let index = MORSE_LU.iter().position(|&s| s == morse);
-        let index = match index {
-            Some(idx) => idx,
-            None => bail!("Morse '{}' not found in lookup table", morse),
-        };
-
-        let latin = LATIN_LU[index];
-        buf.push(latin);
+        let s = buf.join("");
+        vec.push(s);
     }
 
-    let s = buf.join("");
+    let s = vec.join(" ");
 
     Ok(s)
 }
