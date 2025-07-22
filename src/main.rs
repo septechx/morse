@@ -1,5 +1,9 @@
-use anyhow::{anyhow, bail, Result};
-use std::{fmt::Display, io::stdin, process};
+use anyhow::{Result, anyhow, bail};
+use std::{
+    fmt::Display,
+    io::{Read, stdin},
+    process,
+};
 
 use crate::parse::{morse, parse};
 
@@ -40,7 +44,7 @@ fn main() -> Result<()> {
             None => {
                 mode = Some(read_mode()?);
                 println!(
-                    "Selected mode {}, Back (type Esc and Enter)",
+                    "Selected mode {}, Back (Esc + Enter)",
                     mode.as_ref().unwrap()
                 );
             }
@@ -89,7 +93,7 @@ fn process(fun: fn(&str) -> Result<String>) -> Result<Option<String>> {
 
     let s = buf.trim();
 
-    if s.eq_ignore_ascii_case("esc") {
+    if s.escape_unicode().to_string() == "\\u{1b}" {
         return Ok(None);
     }
 
