@@ -1,7 +1,8 @@
 use anyhow::{Result, anyhow, bail};
 use std::{
+    env,
     fmt::Display,
-    io::{Read, stdin},
+    io::{Read, Write, stdin, stdout},
     process,
 };
 
@@ -37,6 +38,31 @@ impl Display for Mode {
 }
 
 fn main() -> Result<()> {
+    let args: Vec<String> = env::args().collect();
+    let len = args.len();
+
+    match len {
+        1 => interactive(),
+        2 => cli(args),
+        _ => bail!("Expected 0 or 1 arguments, recieved {}", len - 1),
+    }
+}
+
+fn cli(args: Vec<String>) -> Result<()> {
+    let s = args[1].trim();
+
+    let s = if s.starts_with(['.', '-']) {
+        parse(s)
+    } else {
+        morse(s)
+    }?;
+
+    println!("{s}");
+
+    Ok(())
+}
+
+fn interactive() -> Result<()> {
     let mut mode: Option<Mode> = None;
 
     loop {
