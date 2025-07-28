@@ -1,10 +1,5 @@
-use anyhow::{Result, anyhow, bail};
-use std::{
-    env,
-    fmt::Display,
-    io::{Read, Write, stdin, stdout},
-    process,
-};
+use anyhow::{anyhow, bail, Result};
+use std::{env, fmt::Display, io::stdin, process};
 
 use crate::parse::{morse, parse};
 
